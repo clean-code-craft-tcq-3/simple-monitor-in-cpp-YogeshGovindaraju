@@ -4,10 +4,10 @@
 class StateOfChargeManager : public BatteryManagementSystem
 {
     public:
-    bool checkOptimumLimit(float stateOfCharge)
+    bool isWithinLimit(float stateOfCharge)
     {
         bool returnStatus = true;
-        if(stateOfCharge < MINIMUMSTATEOFCHARGE || stateOfCharge > MAXIMUMSTATEOFCHARGE)
+        if(classifyRange(stateOfCharge) != NORMAL)
         {
             displayStateOfChargeAlert();
             returnStatus = false;
@@ -15,7 +15,7 @@ class StateOfChargeManager : public BatteryManagementSystem
         return returnStatus;
     }
     
-    Range getRange(float stateOfCharge)
+    Range classifyRange(float stateOfCharge)
     {
         Range rangeStatus = NORMAL;
         if(stateOfCharge < MINIMUMSTATEOFCHARGE)

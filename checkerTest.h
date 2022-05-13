@@ -16,34 +16,34 @@ void testBatteryTemperature()
 {
     TemperatureManager temperatureManager;
     BatteryManagementSystem *batteryTemperatureStatus = &temperatureManager;
-    assert(batteryTemperatureStatus->checkOptimumLimit(-1) == false);
-    assert(batteryTemperatureStatus->getRange(-1) == LOW);
-    assert(batteryTemperatureStatus->checkOptimumLimit(30) == true);
-    assert(batteryTemperatureStatus->getRange(30) == NORMAL);
-    assert(batteryTemperatureStatus->checkOptimumLimit(46) == false);
-    assert(batteryTemperatureStatus->getRange(46) == HIGH);
+    assert(batteryTemperatureStatus->isWithinLimit(-1) == false);
+    assert(batteryTemperatureStatus->classifyRange(-1) == LOW);
+    assert(batteryTemperatureStatus->isWithinLimit(30) == true);
+    assert(batteryTemperatureStatus->classifyRange(30) == NORMAL);
+    assert(batteryTemperatureStatus->isWithinLimit(46) == false);
+    assert(batteryTemperatureStatus->classifyRange(46) == HIGH);
 }
 
 void testBatteryStateOfCharge()
 {
     StateOfChargeManager stateOfChargeManager;
     BatteryManagementSystem *batteryStateOfChargeStatus = &stateOfChargeManager;
-    assert(batteryStateOfChargeStatus->checkOptimumLimit(19) == false);
-    assert(batteryStateOfChargeStatus->getRange(19) == LOW);
-    assert(batteryStateOfChargeStatus->checkOptimumLimit(50) == true);
-    assert(batteryStateOfChargeStatus->getRange(50) == NORMAL);
-    assert(batteryStateOfChargeStatus->checkOptimumLimit(81) == false);
-    assert(batteryStateOfChargeStatus->getRange(81) == HIGH);
+    assert(batteryStateOfChargeStatus->isWithinLimit(19) == false);
+    assert(batteryStateOfChargeStatus->classifyRange(19) == LOW);
+    assert(batteryStateOfChargeStatus->isWithinLimit(50) == true);
+    assert(batteryStateOfChargeStatus->classifyRange(50) == NORMAL);
+    assert(batteryStateOfChargeStatus->isWithinLimit(81) == false);
+    assert(batteryStateOfChargeStatus->classifyRange(81) == HIGH);
 }
 
 void testBatteryChargeRate()
 {
     ChargeRateManager chargeRateManager;
     BatteryManagementSystem *batteryChargeRateStatus = &chargeRateManager;
-    assert(batteryChargeRateStatus->checkOptimumLimit(0.5) == true);
-    assert(batteryChargeRateStatus->getRange(0.5) == NORMAL);
-    assert(batteryChargeRateStatus->checkOptimumLimit(0.81) == false);
-    assert(batteryChargeRateStatus->getRange(0.81) == HIGH);
+    assert(batteryChargeRateStatus->isWithinLimit(0.5) == true);
+    assert(batteryChargeRateStatus->classifyRange(0.5) == NORMAL);
+    assert(batteryChargeRateStatus->isWithinLimit(0.81) == false);
+    assert(batteryChargeRateStatus->classifyRange(0.81) == HIGH);
 }
 
 #endif

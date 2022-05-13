@@ -4,8 +4,8 @@
 class BatteryManagementSystem
 {
     public:
-    virtual bool checkOptimumLimit(float) = 0;
-    virtual Range getRange(float) = 0;
+    virtual bool isWithinLimit(float) = 0;
+    virtual Range classifyRange(float) = 0;
 };
 
 #endif

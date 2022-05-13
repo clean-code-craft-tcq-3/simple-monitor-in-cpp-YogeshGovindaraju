@@ -8,11 +8,11 @@ bool isBatteryOk(float temperature, float stateOfCharge, float chargeRate)
     StateOfChargeManager stateOfChargeManager;
     ChargeRateManager chargeRateManager;
     batteryTemperatureStatus = &temperatureManager;
-    bool temperatureStatus = batteryTemperatureStatus->checkOptimumLimit(temperature);
+    bool temperatureStatus = batteryTemperatureStatus->isWithinLimit(temperature);
     batteryStateOfChargeStatus = &stateOfChargeManager;
-    bool stateOfChargeStatus = batteryStateOfChargeStatus->checkOptimumLimit(stateOfCharge);
+    bool stateOfChargeStatus = batteryStateOfChargeStatus->isWithinLimit(stateOfCharge);
     batteryChargeRateStatus = &chargeRateManager;
-    bool chargeRateStatus = batteryChargeRateStatus->checkOptimumLimit(chargeRate);
+    bool chargeRateStatus = batteryChargeRateStatus->isWithinLimit(chargeRate);
     return (temperatureStatus && stateOfChargeStatus && chargeRateStatus);
 }
 

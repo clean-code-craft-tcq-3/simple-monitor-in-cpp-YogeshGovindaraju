@@ -4,10 +4,10 @@
 class ChargeRateManager : public BatteryManagementSystem
 {
     public:
-    bool checkOptimumLimit(float chargeRate)
+    bool isWithinLimit(float chargeRate)
     {
         bool returnStatus = true;
-        if(chargeRate > MAXIMUMCHARGERATE)
+        if(classifyRange(chargeRate) != NORMAL)
         {
             displayChargeRateAlert();
             returnStatus = false;
@@ -15,7 +15,7 @@ class ChargeRateManager : public BatteryManagementSystem
         return returnStatus;
     }
     
-    Range getRange(float chargeRate)
+    Range classifyRange(float chargeRate)
     {
         Range rangeStatus = NORMAL;
         if(chargeRate > MAXIMUMCHARGERATE)

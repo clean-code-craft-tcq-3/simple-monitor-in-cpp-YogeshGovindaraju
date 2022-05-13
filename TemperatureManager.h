@@ -4,10 +4,10 @@
 class TemperatureManager : public BatteryManagementSystem
 {
     public:
-    bool checkOptimumLimit(float temperature)
+    bool isWithinLimit(float temperature)
     {
         bool returnStatus = true;
-        if(temperature < MINIMUMTEMPERATURE || temperature > MAXIMUMTEMPERATURE)
+        if(classifyRange(temperature) != NORMAL)
         {
             displayTemperatureAlert();
             returnStatus = false;
@@ -15,7 +15,7 @@ class TemperatureManager : public BatteryManagementSystem
         return returnStatus;
     }
     
-    Range getRange(float temperature)
+    Range classifyRange(float temperature)
     {
         Range rangeStatus = NORMAL;
         if(temperature < MINIMUMTEMPERATURE)
