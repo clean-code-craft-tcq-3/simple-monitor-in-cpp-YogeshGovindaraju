@@ -3,35 +3,89 @@
 
 class StateOfChargeManager : public BatteryManagementSystem
 {
+    std::vector<Range> StateOfChargeRange;
+    std::vector<float> StateOfChargeLimit;
+    std::vector<std::string> messages;
+    typedef void (StateOfChargeManager::*updateMessages)(void);
+    std::map<Language, updateMessages> languageMessagesList;
+    
     public:
-    bool isWithinLimit(float stateOfCharge)
+    StateOfChargeManager(bool withWarningLevel, Language messageLanguage)
+    {
+        populateStateOfChargeValues(withWarningLevel);
+        populateMessages(messageLanguage);
+    }
+    
+    void populateStateOfChargeValues(bool withWarningLevel)
+    {
+        if(withWarningLevel)
+        {
+            StateOfChargeRange.push_back(LOW_BREACH);
+            StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE);
+            StateOfChargeRange.push_back(LOW_WARNING);
+            StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE+(MAXIMUMSTATEOFCHARGE*0.05));
+            StateOfChargeRange.push_back(NORMAL);
+            StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE-(MAXIMUMSTATEOFCHARGE*0.05));
+            StateOfChargeRange.push_back(HIGH_WARNING);
+            StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE);
+            StateOfChargeRange.push_back(HIGH_BREACH);
+        }
+        else
+        {
+            StateOfChargeRange.push_back(LOW_BREACH);
+            StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE);
+            StateOfChargeRange.push_back(NORMAL);
+            StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE);
+            StateOfChargeRange.push_back(HIGH_BREACH);
+        }
+    }
+    
+    void populateMessages(Language messageLanguage)
+    {
+        languageMessagesList.insert(std::pair<Language, updateMessages>(ENGLISH, &StateOfChargeManager::populateEnglishMessages));
+        languageMessagesList.insert(std::pair<Language, updateMessages>(GERMAN, &StateOfChargeManager::populateGermanMessages));
+        std::map<Language, updateMessages>::const_iterator messageIterator = languageMessagesList.find(messageLanguage);
+        assert(messageIterator != languageMessagesList.end());
+        (this->*messageIterator->second)();
+    }
+    
+    void populateEnglishMessages()
+    {
+        messages.push_back("State of Charge out of range!");
+        messages.push_back("Warning: Approaching charge-peak");
+        messages.push_back("Warning: Approaching discharge");
+    }
+    
+    void populateGermanMessages()
+    {
+        messages.push_back("Ladezustand außerhalb des Bereichs!");
+        messages.push_back("Warnung: Ladespitze nähert sich");
+        messages.push_back("Warnung: Naht Entladung");
+    }
+    
+    bool isWithinLimit(float stateOfCharge, void (*displayStateOfChargeAlert)(Range,std::vector<std::string>))
     {
         bool returnStatus = true;
-        if(classifyRange(stateOfCharge) != NORMAL)
+        Range classifiedStateOfChargeRange = classifyRange(stateOfCharge);
+        if((classifiedStateOfChargeRange == LOW_BREACH) || (classifiedStateOfChargeRange == HIGH_BREACH))
         {
-            displayStateOfChargeAlert();
             returnStatus = false;
         }
+        displayStateOfChargeAlert(classifiedStateOfChargeRange, messages);
         return returnStatus;
     }
     
     Range classifyRange(float stateOfCharge)
     {
-        Range rangeStatus = NORMAL;
-        if(stateOfCharge < MINIMUMSTATEOFCHARGE)
+        unsigned int i = 0;
+        for(i=0; i<StateOfChargeLimit.size(); i++)
         {
-            rangeStatus = LOW;
+            if(stateOfCharge <= StateOfChargeLimit.at(i))
+            {
+                return StateOfChargeRange.at(i);
+            }
         }
-        else if(stateOfCharge > MAXIMUMSTATEOFCHARGE)
-        {
-            rangeStatus = HIGH;
-        }
-        return rangeStatus;
-    }
-    
-    void displayStateOfChargeAlert()
-    {
-        std::cout << "State of Charge out of range!\n";
+        return StateOfChargeRange.at(i);
     }
 };
 

@@ -4,7 +4,7 @@
 class BatteryManagementSystem
 {
     public:
-    virtual bool isWithinLimit(float) = 0;
+    virtual bool isWithinLimit(float, void (*displayAlert)(Range,std::vector<std::string>)) = 0;
     virtual Range classifyRange(float) = 0;
 };
 
