@@ -21,7 +21,7 @@ class ChargeRateManager : public BatteryManagementSystem
         if(withWarningLevel)
         {
             ChargeRateRange.push_back(NORMAL);
-            ChargeRateLimit.push_back(MAXIMUMCHARGERATE-(MAXIMUMCHARGERATE*0.05));
+            ChargeRateLimit.push_back(MAXIMUMCHARGERATE-(MAXIMUMCHARGERATE*TOLERANCE));
             ChargeRateRange.push_back(HIGH_WARNING);
             ChargeRateLimit.push_back(MAXIMUMCHARGERATE);
             ChargeRateRange.push_back(HIGH_BREACH);

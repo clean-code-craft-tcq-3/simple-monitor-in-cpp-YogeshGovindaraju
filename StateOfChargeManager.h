@@ -23,9 +23,9 @@ class StateOfChargeManager : public BatteryManagementSystem
             StateOfChargeRange.push_back(LOW_BREACH);
             StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE);
             StateOfChargeRange.push_back(LOW_WARNING);
-            StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE+(MAXIMUMSTATEOFCHARGE*0.05));
+            StateOfChargeLimit.push_back(MINIMUMSTATEOFCHARGE+(MAXIMUMSTATEOFCHARGE*TOLERANCE));
             StateOfChargeRange.push_back(NORMAL);
-            StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE-(MAXIMUMSTATEOFCHARGE*0.05));
+            StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE-(MAXIMUMSTATEOFCHARGE*TOLERANCE));
             StateOfChargeRange.push_back(HIGH_WARNING);
             StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE);
             StateOfChargeRange.push_back(HIGH_BREACH);

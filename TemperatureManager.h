@@ -23,9 +23,9 @@ class TemperatureManager : public BatteryManagementSystem
             temperatureRange.push_back(LOW_BREACH);
             temperatureLimit.push_back(MINIMUMTEMPERATURE);
             temperatureRange.push_back(LOW_WARNING);
-            temperatureLimit.push_back(MINIMUMTEMPERATURE+(MAXIMUMTEMPERATURE*0.05));
+            temperatureLimit.push_back(MINIMUMTEMPERATURE+(MAXIMUMTEMPERATURE*TOLERANCE));
             temperatureRange.push_back(NORMAL);
-            temperatureLimit.push_back(MAXIMUMTEMPERATURE-(MAXIMUMTEMPERATURE*0.05));
+            temperatureLimit.push_back(MAXIMUMTEMPERATURE-(MAXIMUMTEMPERATURE*TOLERANCE));
             temperatureRange.push_back(HIGH_WARNING);
             temperatureLimit.push_back(MAXIMUMTEMPERATURE);
             temperatureRange.push_back(HIGH_BREACH);
