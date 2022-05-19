@@ -13,87 +13,59 @@ void testBatteryStatus()
     assert(isBatteryOk({45, 80, 0.8, WITHWARNINGLEVEL, GERMAN, displayAlert}) == true);
 }
 
+bool isBatteryStatusRangeAsExpected(BatteryStatus batteryStatus)
+{
+    return (batteryStatus.batteryManagementStatus->isWithinLimit(batteryStatus.value, batteryStatus.displayAlert) == batteryStatus.limit) &&
+           (batteryStatus.batteryManagementStatus->classifyRange(batteryStatus.value) == batteryStatus.range);
+}
+
 void testBatteryTemperature()
 {
     TemperatureManager temperatureWithoutWarning(WITHOUTWARNINGLEVEL, ENGLISH);
-    BatteryManagementSystem *batteryTemperatureStatus = &temperatureWithoutWarning;
-    assert(batteryTemperatureStatus->isWithinLimit(-1, displayAlert) == false);
-    assert(batteryTemperatureStatus->classifyRange(-1) == LOW_BREACH);
-    assert(batteryTemperatureStatus->isWithinLimit(1, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(1) == NORMAL);
-    assert(batteryTemperatureStatus->isWithinLimit(30, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(30) == NORMAL);
-    assert(batteryTemperatureStatus->isWithinLimit(44, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(44) == NORMAL);
-    assert(batteryTemperatureStatus->isWithinLimit(46, displayAlert) == false);
-    assert(batteryTemperatureStatus->classifyRange(46) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithoutWarning, -1, EXCEEDED_LIMIT, LOW_BREACH, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithoutWarning, 1, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithoutWarning, 30, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithoutWarning, 44, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithoutWarning, 46, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
     
     TemperatureManager temperatureWithWarning(WITHWARNINGLEVEL, GERMAN);
-    batteryTemperatureStatus = &temperatureWithWarning;
-    assert(batteryTemperatureStatus->isWithinLimit(-1, displayAlert) == false);
-    assert(batteryTemperatureStatus->classifyRange(-1) == LOW_BREACH);
-    assert(batteryTemperatureStatus->isWithinLimit(1, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(1) == LOW_WARNING);
-    assert(batteryTemperatureStatus->isWithinLimit(30, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(30) == NORMAL);
-    assert(batteryTemperatureStatus->isWithinLimit(44, displayAlert) == true);
-    assert(batteryTemperatureStatus->classifyRange(44) == HIGH_WARNING);
-    assert(batteryTemperatureStatus->isWithinLimit(46, displayAlert) == false);
-    assert(batteryTemperatureStatus->classifyRange(46) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithWarning, -1, EXCEEDED_LIMIT, LOW_BREACH, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithWarning, 1, WITHIN_LIMIT, LOW_WARNING, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithWarning, 30, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithWarning, 44, WITHIN_LIMIT, HIGH_WARNING, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&temperatureWithWarning, 46, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
 }
 
 void testBatteryStateOfCharge()
 {
     StateOfChargeManager stateOfChargeWithoutWarning(WITHOUTWARNINGLEVEL, ENGLISH);
-    BatteryManagementSystem *batteryStateOfChargeStatus = &stateOfChargeWithoutWarning;
-    assert(batteryStateOfChargeStatus->isWithinLimit(19, displayAlert) == false);
-    assert(batteryStateOfChargeStatus->classifyRange(19) == LOW_BREACH);
-    assert(batteryStateOfChargeStatus->isWithinLimit(21, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(21) == NORMAL);
-    assert(batteryStateOfChargeStatus->isWithinLimit(50, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(50) == NORMAL);
-    assert(batteryStateOfChargeStatus->isWithinLimit(79, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(79) == NORMAL);
-    assert(batteryStateOfChargeStatus->isWithinLimit(81, displayAlert) == false);
-    assert(batteryStateOfChargeStatus->classifyRange(81) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithoutWarning, 19, EXCEEDED_LIMIT, LOW_BREACH, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithoutWarning, 21, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithoutWarning, 50, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithoutWarning, 79, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithoutWarning, 81, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
     
     StateOfChargeManager stateOfChargeWithWarning(WITHWARNINGLEVEL, GERMAN);
-    batteryStateOfChargeStatus = &stateOfChargeWithWarning;
-    assert(batteryStateOfChargeStatus->isWithinLimit(19, displayAlert) == false);
-    assert(batteryStateOfChargeStatus->classifyRange(19) == LOW_BREACH);
-    assert(batteryStateOfChargeStatus->isWithinLimit(21, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(21) == LOW_WARNING);
-    assert(batteryStateOfChargeStatus->isWithinLimit(50, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(50) == NORMAL);
-    assert(batteryStateOfChargeStatus->isWithinLimit(79, displayAlert) == true);
-    assert(batteryStateOfChargeStatus->classifyRange(79) == HIGH_WARNING);
-    assert(batteryStateOfChargeStatus->isWithinLimit(81, displayAlert) == false);
-    assert(batteryStateOfChargeStatus->classifyRange(81) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithWarning, 19, EXCEEDED_LIMIT, LOW_BREACH, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithWarning, 21, WITHIN_LIMIT, LOW_WARNING, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithWarning, 50, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithWarning, 79, WITHIN_LIMIT, HIGH_WARNING, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&stateOfChargeWithWarning, 81, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
 }
 
 void testBatteryChargeRate()
 {
     ChargeRateManager chargeRateWithoutWarning(WITHOUTWARNINGLEVEL, ENGLISH);
-    BatteryManagementSystem *batteryChargeRateStatus = &chargeRateWithoutWarning;
-    assert(batteryChargeRateStatus->isWithinLimit(0.01, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.01) == NORMAL);
-    assert(batteryChargeRateStatus->isWithinLimit(0.5, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.5) == NORMAL);
-    assert(batteryChargeRateStatus->isWithinLimit(0.79, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.79) == NORMAL);
-    assert(batteryChargeRateStatus->isWithinLimit(0.81, displayAlert) == false);
-    assert(batteryChargeRateStatus->classifyRange(0.81) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithoutWarning, 0.01, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithoutWarning, 0.5, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithoutWarning, 0.79, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithoutWarning, 0.81, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
     
     ChargeRateManager chargeRateWithWarning(WITHWARNINGLEVEL, GERMAN);
-    batteryChargeRateStatus = &chargeRateWithWarning;
-    assert(batteryChargeRateStatus->isWithinLimit(0.01, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.01) == NORMAL);
-    assert(batteryChargeRateStatus->isWithinLimit(0.5, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.5) == NORMAL);
-    assert(batteryChargeRateStatus->isWithinLimit(0.79, displayAlert) == true);
-    assert(batteryChargeRateStatus->classifyRange(0.79) == HIGH_WARNING);
-    assert(batteryChargeRateStatus->isWithinLimit(0.81, displayAlert) == false);
-    assert(batteryChargeRateStatus->classifyRange(0.81) == HIGH_BREACH);
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithWarning, 0.01, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithWarning, 0.5, WITHIN_LIMIT, NORMAL, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithWarning, 0.79, WITHIN_LIMIT, HIGH_WARNING, displayAlert}));
+    assert(isBatteryStatusRangeAsExpected({&chargeRateWithWarning, 0.81, EXCEEDED_LIMIT, HIGH_BREACH, displayAlert}));
 }
 
 #endif

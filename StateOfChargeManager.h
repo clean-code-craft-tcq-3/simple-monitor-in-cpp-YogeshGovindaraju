@@ -6,14 +6,12 @@ class StateOfChargeManager : public BatteryManagementSystem
     std::vector<Range> StateOfChargeRange;
     std::vector<float> StateOfChargeLimit;
     std::vector<std::string> messages;
-    typedef void (StateOfChargeManager::*updateMessages)(void);
-    std::map<Language, updateMessages> languageMessagesList;
     
     public:
     StateOfChargeManager(bool withWarningLevel, Language messageLanguage)
     {
         populateStateOfChargeValues(withWarningLevel);
-        populateMessages(messageLanguage);
+        populateStateOfChargeMessages(messageLanguage, messages);
     }
     
     void populateStateOfChargeValues(bool withWarningLevel)
@@ -38,29 +36,6 @@ class StateOfChargeManager : public BatteryManagementSystem
             StateOfChargeLimit.push_back(MAXIMUMSTATEOFCHARGE);
             StateOfChargeRange.push_back(HIGH_BREACH);
         }
-    }
-    
-    void populateMessages(Language messageLanguage)
-    {
-        languageMessagesList.insert(std::pair<Language, updateMessages>(ENGLISH, &StateOfChargeManager::populateEnglishMessages));
-        languageMessagesList.insert(std::pair<Language, updateMessages>(GERMAN, &StateOfChargeManager::populateGermanMessages));
-        std::map<Language, updateMessages>::const_iterator messageIterator = languageMessagesList.find(messageLanguage);
-        assert(messageIterator != languageMessagesList.end());
-        (this->*messageIterator->second)();
-    }
-    
-    void populateEnglishMessages()
-    {
-        messages.push_back("State of Charge out of range!");
-        messages.push_back("Warning: Approaching charge-peak");
-        messages.push_back("Warning: Approaching discharge");
-    }
-    
-    void populateGermanMessages()
-    {
-        messages.push_back("Ladezustand außerhalb des Bereichs!");
-        messages.push_back("Warnung: Ladespitze nähert sich");
-        messages.push_back("Warnung: Naht Entladung");
     }
     
     bool isWithinLimit(float stateOfCharge, void (*displayStateOfChargeAlert)(Range,std::vector<std::string>))

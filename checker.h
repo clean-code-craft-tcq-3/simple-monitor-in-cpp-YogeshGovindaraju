@@ -18,6 +18,13 @@
 enum Range {LOW_BREACH, LOW_WARNING, NORMAL, HIGH_WARNING, HIGH_BREACH};
 enum Language {ENGLISH, GERMAN};
 enum MessageIndex {OUT_OF_RANGE, HIGH_WARNING_RANGE, LOW_WARNING_RANGE};
+enum Limit {EXCEEDED_LIMIT, WITHIN_LIMIT};
+
+#include "LanguageMessage.h"
+#include "BatteryManagementSystem.h"
+#include "TemperatureManager.h"
+#include "StateOfChargeManager.h"
+#include "ChargeRateManager.h"
 
 struct BatterySystem
 {
@@ -29,14 +36,18 @@ struct BatterySystem
     void (*displayAlert)(Range, std::vector<std::string>);
 };
 
-#include "BatteryManagementSystem.h"
-#include "TemperatureManager.h"
-#include "StateOfChargeManager.h"
-#include "ChargeRateManager.h"
+struct BatteryStatus
+{
+    BatteryManagementSystem *batteryManagementStatus;
+    float value;
+    Limit limit;
+    Range range;
+    void (*displayAlert)(Range, std::vector<std::string>);
+};
 
+bool isBatteryStatusWithinLimit(BatteryManagementSystem *batteryStatus, float value, void (*displayAlert)(Range, std::vector<std::string>));
 bool isBatteryOk(BatterySystem system);
-bool getBatteryStatus(BatteryManagementSystem *batteryStatus, float value, void (*displayAlert)(Range, std::vector<std::string>));
-void displayAlert(Range classifiedTemperatureRange, std::vector<std::string> messages);
 void displayWarning(Range classifiedTemperatureRange, std::vector<std::string> messages);
+void displayAlert(Range classifiedTemperatureRange, std::vector<std::string> messages);
 
 #endif
